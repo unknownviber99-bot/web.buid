@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Amol Soft Developing Industry — Premium Software Solutions</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #050810;
+            --surface: #0c0f1e;
+            --card: #111527;
+            --border: rgba(99, 179, 255, 0.1);
+            --gold: #f5c842;
+            --blue: #4f9fff;
+            --teal: #00e5c8;
+            --rose: #ff6b8a;
+            --text: #eef2ff;
+            --muted: #8899bb;
+            --grad: linear-gradient(135deg, #4f9fff, #00e5c8);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 300;
+            overflow-x: hidden;
+        }
+
+        /* CURSOR */
+        #cur {
+            width: 10px;
+            height: 10px;
+            background: var(--teal);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width .3s, height .3s;
+        }
+
+        #cur2 {
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(0, 229, 200, .35);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: all .15s ease;
+        }
+
+        /* PARTICLES */
+        #particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* NAV */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.2rem 5%;
+            background: rgba(5, 8, 16, .85);
+            backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: var(--grad);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1rem;
+            color: #050810;
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text);
+        }
+
+        .logo-text span {
+            color: var(--blue);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: .88rem;
+            font-weight: 400;
+            letter-spacing: .04em;
+            transition: color .3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-btns {
+            display: flex;
+            gap: .75rem;
+        }
+
+        .btn-ghost {
+            padding: .5rem 1.2rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: .85rem;
+            transition: all .3s;
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--blue);
+            color: var(--blue);
+        }
+
+        .btn-fill {
+            padding: .5rem 1.4rem;
+            background: var(--grad);
+            border-radius: 8px;
+            color: #050810;
+            text-decoration: none;
+            font-size: .85rem;
+            font-weight: 600;
+            transition: opacity .3s, transform .3s;
+        }
+
+        .btn-fill:hover {
+            opacity: .9;
+            transform: translateY(-1px);
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 8rem 5% 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            background: rgba(79, 159, 255, .08);
+            border: 1px solid rgba(79, 159, 255, .2);
+            padding: .4rem 1.1rem;
+            border-radius: 50px;
+            font-size: .75rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--blue);
+            margin-bottom: 2rem;
+            animation: fadeUp .8s .2s both;
+        }
+
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--teal);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.8rem, 6vw, 5.5rem);
+            font-weight: 900;
+            line-height: 1.08;
+            letter-spacing: -.02em;
+            margin-bottom: 1.5rem;
+            animation: fadeUp .8s .4s both;
+        }
+
+        .hero h1 em {
+            font-style: normal;
+            background: var(--grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            color: var(--muted);
+            font-size: 1.05rem;
+            max-width: 520px;
+            line-height: 1.8;
+            margin-bottom: 3rem;
+            animation: fadeUp .8s .6s both;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeUp .8s .8s both;
+        }
+
+        .hero-cta-main {
+            display: inline-flex;
+            align-items: center;
+            gap: .6rem;
+            background: var(--grad);
+            color: #050810;
+            padding: .9rem 2.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: .95rem;
+            text-decoration: none;
+            transition: box-shadow .3s, transform .3s;
+        }
+
+        .hero-cta-main:hover {
+            box-shadow: 0 0 40px rgba(0, 229, 200, .3);
+            transform: translateY(-2px);
+        }
+
+        .hero-cta-sec {
+            display: inline-flex;
+            align-items: center;
+            gap: .6rem;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: .9rem 2.2rem;
+            border-radius: 50px;
+            font-size: .95rem;
+            text-decoration: none;
+            transition: all .3s;
+        }
+
+        .hero-cta-sec:hover {
+            border-color: rgba(255, 255, 255, .2);
+            transform: translateY(-2px);
+        }
+
+        /* FLOATING CARDS */
+        .hero-visual {
+            position: relative;
+            margin-top: 4rem;
+            width: 100%;
+            max-width: 900px;
+            animation: fadeUp .8s 1s both;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, .04);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 3rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-n {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            font-weight: 900;
+            background: var(--grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-l {
+            font-size: .72rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-top: .2rem;
+        }
+
+        /* MARQUEE */
+        .marquee-wrap {
+            padding: 2.5rem 0;
+            overflow: hidden;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .marquee-track {
+            display: flex;
+            gap: 4rem;
+            animation: marquee 20s linear infinite;
+            width: max-content;
+        }
+
+        .marquee-item {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            color: var(--muted);
+            font-size: .85rem;
+            white-space: nowrap;
+        }
+
+        .marquee-item span {
+            color: var(--blue);
+        }
+
+        /* SERVICES */
+        .services {
+            padding: 7rem 5%;
+            background: var(--bg);
+        }
+
+        .sec-head {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .sec-tag {
+            font-size: .72rem;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--teal);
+            margin-bottom: .8rem;
+        }
+
+        .sec-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -.02em;
+            margin-bottom: 1rem;
+        }
+
+        .sec-desc {
+            color: var(--muted);
+            font-size: .95rem;
+            line-height: 1.8;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .svc-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.2rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform .3s, border-color .3s, box-shadow .3s;
+            cursor: default;
+        }
+
+        .svc-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 0 0, rgba(79, 159, 255, .05), transparent 60%);
+            opacity: 0;
+            transition: opacity .4s;
+        }
+
+        .svc-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(79, 159, 255, .25);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .4);
+        }
+
+        .svc-card:hover::before {
+            opacity: 1;
+        }
+
+        .svc-icon {
+            font-size: 2rem;
+            margin-bottom: 1.2rem;
+            display: block;
+        }
+
+        .svc-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: .6rem;
+        }
+
+        .svc-card p {
+            color: var(--muted);
+            font-size: .85rem;
+            line-height: 1.7;
+        }
+
+        .svc-tag {
+            display: inline-block;
+            margin-top: 1.2rem;
+            background: rgba(79, 159, 255, .08);
+            border: 1px solid rgba(79, 159, 255, .15);
+            color: var(--blue);
+            font-size: .72rem;
+            letter-spacing: .08em;
+            padding: .25rem .7rem;
+            border-radius: 50px;
+        }
+
+        /* PROCESS */
+        .process {
+            padding: 7rem 5%;
+            background: var(--surface);
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 4rem;
+            position: relative;
+        }
+
+        .process-steps::before {
+            content: '';
+            position: absolute;
+            top: 36px;
+            left: 12.5%;
+            right: 12.5%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--blue), transparent);
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-num {
+            width: 72px;
+            height: 72px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.2rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--blue);
+            transition: all .3s;
+        }
+
+        .step:hover .step-num {
+            background: var(--blue);
+            color: #050810;
+            border-color: var(--blue);
+            box-shadow: 0 0 30px rgba(79, 159, 255, .4);
+        }
+
+        .step h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            margin-bottom: .5rem;
+        }
+
+        .step p {
+            color: var(--muted);
+            font-size: .82rem;
+            line-height: 1.65;
+        }
+
+        /* TEAM */
+        .team {
+            padding: 7rem 5%;
+            background: var(--bg);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            max-width: 860px;
+            margin: 4rem auto 0;
+        }
+
+        .team-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            transition: all .3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% -20%, rgba(79, 159, 255, .08), transparent 60%);
+            opacity: 0;
+            transition: opacity .4s;
+        }
+
+        .team-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(79, 159, 255, .25);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, .5);
+        }
+
+        .team-card:hover::after {
+            opacity: 1;
+        }
+
+        .t-avatar {
+            width: 82px;
+            height: 82px;
+            border-radius: 50%;
+            margin: 0 auto 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+        }
+
+        .av-a {
+            background: linear-gradient(135deg, rgba(0, 229, 200, .15), rgba(0, 229, 200, .04));
+            border: 2px solid rgba(0, 229, 200, .3);
+            color: var(--teal);
+        }
+
+        .av-b {
+            background: linear-gradient(135deg, rgba(79, 159, 255, .15), rgba(79, 159, 255, .04));
+            border: 2px solid rgba(79, 159, 255, .3);
+            color: var(--blue);
+        }
+
+        .av-c {
+            background: linear-gradient(135deg, rgba(245, 200, 66, .15), rgba(245, 200, 66, .04));
+            border: 2px solid rgba(245, 200, 66, .3);
+            color: var(--gold);
+        }
+
+        .t-role {
+            font-size: .7rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--teal);
+            margin-bottom: .35rem;
+        }
+
+        .team-card:nth-child(2) .t-role {
+            color: var(--blue);
+        }
+
+        .team-card:nth-child(3) .t-role {
+            color: var(--gold);
+        }
+
+        .t-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 1.3rem;
+        }
+
+        .t-phone {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid var(--border);
+            padding: .45rem 1rem;
+            border-radius: 50px;
+            font-size: .82rem;
+            color: var(--muted);
+            text-decoration: none;
+            transition: all .3s;
+        }
+
+        .t-phone:hover {
+            color: var(--teal);
+            border-color: rgba(0, 229, 200, .3);
+            background: rgba(0, 229, 200, .06);
+        }
+
+        /* ORDER */
+        .order-sect {
+            padding: 7rem 5%;
+            background: var(--surface);
+        }
+
+        .order-wrap {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 5rem;
+            align-items: center;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .order-info .feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .feat-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(79, 159, 255, .08);
+            border: 1px solid rgba(79, 159, 255, .15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .feat-text h5 {
+            font-weight: 600;
+            margin-bottom: .2rem;
+            font-size: .92rem;
+        }
+
+        .feat-text p {
+            color: var(--muted);
+            font-size: .82rem;
+            line-height: 1.6;
+        }
+
+        .order-form {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .order-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--grad);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .fg {
+            display: flex;
+            flex-direction: column;
+            gap: .4rem;
+            margin-bottom: 1rem;
+        }
+
+        .fg.full {
+            grid-column: 1/-1;
+        }
+
+        .fg label {
+            font-size: .75rem;
+            color: var(--muted);
+            letter-spacing: .06em;
+        }
+
+        .fg input,
+        .fg select,
+        .fg textarea {
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: .72rem 1rem;
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: .88rem;
+            outline: none;
+            transition: border-color .3s, box-shadow .3s;
+            width: 100%;
+        }
+
+        .fg input:focus,
+        .fg select:focus,
+        .fg textarea:focus {
+            border-color: rgba(79, 159, 255, .45);
+            box-shadow: 0 0 0 3px rgba(79, 159, 255, .07);
+        }
+
+        .fg select option {
+            background: var(--card);
+        }
+
+        .fg textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: .5rem;
+            background: var(--grad);
+            border: none;
+            color: #050810;
+            padding: .9rem;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: .95rem;
+            cursor: pointer;
+            transition: opacity .3s, transform .3s;
+        }
+
+        .submit-btn:hover {
+            opacity: .9;
+            transform: translateY(-1px);
+        }
+
+        .success-box {
+            display: none;
+            background: rgba(0, 229, 200, .07);
+            border: 1px solid rgba(0, 229, 200, .25);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            color: var(--teal);
+            font-size: .88rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        /* CTA */
+        .cta-sect {
+            padding: 6rem 5%;
+            text-align: center;
+            background: var(--bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-sect::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(79, 159, 255, .06), transparent);
+        }
+
+        .cta-sect h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            letter-spacing: -.03em;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .cta-sect p {
+            color: var(--muted);
+            font-size: 1rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 3rem 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .footer-copy {
+            color: var(--muted);
+            font-size: .82rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: .82rem;
+            transition: color .3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--teal);
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(28px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .3;
+                transform: scale(.65)
+            }
+        }
+
+        @keyframes marquee {
+            from {
+                transform: translateX(0)
+            }
+
+            to {
+                transform: translateX(-50%)
+            }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity .7s ease, transform .7s ease;
+        }
+
+        .reveal.on {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media(max-width:900px) {
+
+            nav .nav-links,
+            .nav-btns .btn-ghost {
+                display: none;
+            }
+
+            .process-steps {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .process-steps::before {
+                display: none;
+            }
+
+            .team-grid,
+            .order-wrap {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cur"></div>
+    <div id="cur2"></div>
+    <canvas id="particles"></canvas>
+
+    <!-- NAV -->
+    <nav>
+        <a href="index.html" class="logo">
+            <div class="logo-icon">AS</div>
+            <div class="logo-text">Amol Soft <span>Dev</span></div>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#services">Services</a></li>
+            <li><a href="#process">Process</a></li>
+            <li><a href="#team">Team</a></li>
+            <li><a href="#order">Order</a></li>
+        </ul>
+        <div class="nav-btns">
+            <a href="login.html" class="btn-ghost">Login</a>
+            <a href="signup.html" class="btn-fill">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge"><span class="pulse-dot"></span> Accepting New Projects — 2025</div>
+        <h1>Amol Soft<br /><em>Developing Industry</em></h1>
+        <p class="hero-sub">We craft enterprise-grade websites, web apps, and custom software solutions that transform
+            businesses and delight users.</p>
+        <div class="hero-ctas">
+            <a href="#order" class="hero-cta-main">✦ Place an Order</a>
+            <a href="signup.html" class="hero-cta-sec">Create Account →</a>
+        </div>
+        <div class="hero-visual">
+            <div class="glass-card">
+                <div class="stats-row">
+                    <div class="stat">
+                        <div class="stat-n">50+</div>
+                        <div class="stat-l">Projects Delivered</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-n">100%</div>
+                        <div class="stat-l">On-Time Rate</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-n">3</div>
+                        <div class="stat-l">Expert Members</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-n">24h</div>
+                        <div class="stat-l">Response Time</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee-wrap">
+        <div class="marquee-track" id="marqueeTrack">
+            <div class="marquee-item">🌐 <span>Website Development</span></div>
+            <div class="marquee-item">📱 <span>Web Applications</span></div>
+            <div class="marquee-item">🛒 <span>E-Commerce</span></div>
+            <div class="marquee-item">⚙️ <span>Custom Software</span></div>
+            <div class="marquee-item">🎨 <span>UI/UX Design</span></div>
+            <div class="marquee-item">🔧 <span>Maintenance & Support</span></div>
+            <div class="marquee-item">🔐 <span>Secure Systems</span></div>
+            <div class="marquee-item">📊 <span>Dashboards & Analytics</span></div>
+            <div class="marquee-item">🌐 <span>Website Development</span></div>
+            <div class="marquee-item">📱 <span>Web Applications</span></div>
+            <div class="marquee-item">🛒 <span>E-Commerce</span></div>
+            <div class="marquee-item">⚙️ <span>Custom Software</span></div>
+            <div class="marquee-item">🎨 <span>UI/UX Design</span></div>
+            <div class="marquee-item">🔧 <span>Maintenance & Support</span></div>
+            <div class="marquee-item">🔐 <span>Secure Systems</span></div>
+            <div class="marquee-item">📊 <span>Dashboards & Analytics</span></div>
+        </div>
+    </div>
+
+    <!-- SERVICES -->
+    <section class="services" id="services">
+        <div class="sec-head reveal">
+            <div class="sec-tag">What We Build</div>
+            <h2 class="sec-title">Our Services</h2>
+            <p class="sec-desc">End-to-end digital solutions from concept to deployment, crafted with precision.</p>
+        </div>
+        <div class="services-grid">
+            <div class="svc-card reveal"><span class="svc-icon">🌐</span>
+                <h3>Website Development</h3>
+                <p>Responsive, fast-loading websites built with modern technologies. Pixel-perfect on every device.</p>
+                <span class="svc-tag">From ₹8,000</span>
+            </div>
+            <div class="svc-card reveal"><span class="svc-icon">📱</span>
+                <h3>Web Applications</h3>
+                <p>Powerful web apps with databases, user auth, dashboards, and real-time features.</p><span
+                    class="svc-tag">From ₹25,000</span>
+            </div>
+            <div class="svc-card reveal"><span class="svc-icon">🛒</span>
+                <h3>E-Commerce Stores</h3>
+                <p>Online stores with product management, payment gateways, and order tracking built-in.</p><span
+                    class="svc-tag">From ₹20,000</span>
+            </div>
+            <div class="svc-card reveal"><span class="svc-icon">⚙️</span>
+                <h3>Custom Software</h3>
+                <p>Bespoke desktop or web-based software to automate your business processes end-to-end.</p><span
+                    class="svc-tag">From ₹40,000</span>
+            </div>
+            <div class="svc-card reveal"><span class="svc-icon">🎨</span>
+                <h3>UI/UX Design</h3>
+                <p>Beautiful, user-tested interfaces. Wireframes, prototypes, and full design systems.</p><span
+                    class="svc-tag">From ₹6,000</span>
+            </div>
+            <div class="svc-card reveal"><span class="svc-icon">🔧</span>
+                <h3>Maintenance & Support</h3>
+                <p>Ongoing updates, performance tuning, and bug fixes — we keep your product healthy.</p><span
+                    class="svc-tag">From ₹2,000/mo</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section class="process" id="process">
+        <div class="sec-head reveal">
+            <div class="sec-tag">How It Works</div>
+            <h2 class="sec-title">Our Process</h2>
+            <p class="sec-desc">Simple, transparent, and efficient. Here's how we work with you from start to finish.
+            </p>
+        </div>
+        <div class="process-steps">
+            <div class="step reveal">
+                <div class="step-num">01</div>
+                <h4>Place Order</h4>
+                <p>Tell us what you need via our order form or direct chat with the team.</p>
+            </div>
+            <div class="step reveal">
+                <div class="step-num">02</div>
+                <h4>Consultation</h4>
+                <p>We discuss your requirements, timeline, and provide a detailed quote.</p>
+            </div>
+            <div class="step reveal">
+                <div class="step-num">03</div>
+                <h4>Development</h4>
+                <p>Our team builds your product with regular updates via private chat.</p>
+            </div>
+            <div class="step reveal">
+                <div class="step-num">04</div>
+                <h4>Delivery</h4>
+                <p>Final testing, deployment, and handover with full support documentation.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEAM -->
+    <section class="team" id="team">
+        <div class="sec-head reveal">
+            <div class="sec-tag">The People</div>
+            <h2 class="sec-title">Meet Our Team</h2>
+            <p class="sec-desc">A dedicated team of passionate developers and managers. Your project gets our full
+                focus.</p>
+        </div>
+        <div class="team-grid">
+            <div class="team-card reveal">
+                <div class="t-avatar av-a">S</div>
+                <div class="t-role">Team Incharge</div>
+                <div class="t-name">Siddharth</div>
+                <a href="tel:9021597349" class="t-phone">📞 9021597349</a>
+            </div>
+            <div class="team-card reveal">
+                <div class="t-avatar av-b">P</div>
+                <div class="t-role">Lead Developer</div>
+                <div class="t-name">Pranav</div>
+                <a href="tel:8208519190" class="t-phone">📞 8208519190</a>
+            </div>
+            <div class="team-card reveal">
+                <div class="t-avatar av-c">P</div>
+                <div class="t-role">Team Manager</div>
+                <div class="t-name">Pratik</div>
+                <a href="tel:8459484110" class="t-phone">📞 8459484110</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ORDER -->
+    <section class="order-sect" id="order">
+        <div class="order-wrap">
+            <div class="order-info reveal">
+                <div class="sec-tag">Start a Project</div>
+                <h2 class="sec-title">Place Your<br />Order Today</h2>
+                <p class="sec-desc" style="margin:0 0 2.5rem;">Fill the form and our team gets notified instantly. We
+                    respond within 24 hours with a complete plan.</p>
+                <div class="feature">
+                    <div class="feat-icon">⚡</div>
+                    <div class="feat-text">
+                        <h5>Instant Notification</h5>
+                        <p>Our team gets alerted via email and WhatsApp the moment you submit.</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feat-icon">💬</div>
+                    <div class="feat-text">
+                        <h5>Private Chat Access</h5>
+                        <p>After signup, chat directly with all team members in real-time.</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feat-icon">📋</div>
+                    <div class="feat-text">
+                        <h5>Custom Quotes</h5>
+                        <p>Every project gets a tailored quote based on your specific requirements.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="order-form reveal">
+                <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:800;margin-bottom:.3rem;">
+                    New Project Request</div>
+                <div style="color:var(--muted);font-size:.85rem;margin-bottom:1.8rem;">All fields marked are required.
+                    We'll contact you within 24h.</div>
+                <div class="form-row">
+                    <div class="fg"><label>Full Name *</label><input type="text" id="o-name" placeholder="Your name" />
+                    </div>
+                    <div class="fg"><label>Phone Number *</label><input type="tel" id="o-phone"
+                            placeholder="+91 XXXXX XXXXX" /></div>
+                    <div class="fg"><label>Email Address</label><input type="email" id="o-email"
+                            placeholder="you@email.com" /></div>
+                    <div class="fg"><label>Service Required *</label>
+                        <select id="o-service">
+                            <option value="">Select service...</option>
+                            <option>Website Development</option>
+                            <option>Web Application</option>
+                            <option>E-Commerce Store</option>
+                            <option>Custom Software</option>
+                            <option>UI/UX Design</option>
+                            <option>Maintenance & Support</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="fg"><label>Budget Range</label>
+                        <select id="o-budget">
+                            <option value="">Select budget...</option>
+                            <option>Under ₹10,000</option>
+                            <option>₹10,000–₹30,000</option>
+                            <option>₹30,000–₹75,000</option>
+                            <option>₹75,000–₹1,50,000</option>
+                            <option>₹1,50,000+</option>
+                        </select>
+                    </div>
+                    <div class="fg"><label>Timeline</label>
+                        <select id="o-timeline">
+                            <option value="">How soon?</option>
+                            <option>ASAP (1–2 weeks)</option>
+                            <option>1 Month</option>
+                            <option>2–3 Months</option>
+                            <option>Flexible</option>
+                        </select>
+                    </div>
+                    <div class="fg full"><label>Project Description *</label><textarea id="o-desc"
+                            placeholder="Describe your project: features needed, references, any specific requirements..."></textarea>
+                    </div>
+                </div>
+                <button class="submit-btn" onclick="submitOrder()">✦ Submit Order Request</button>
+                <div class="success-box" id="orderSuccess">✅ Order submitted! Our team has been notified and will
+                    contact you within 24 hours.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-sect">
+        <h2 class="reveal">Start Building Today.</h2>
+        <p class="reveal">Create a free account to chat with our team and track your project.</p>
+        <a href="signup.html" class="hero-cta-main reveal" style="display:inline-flex;">✦ Create Free Account</a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <a href="index.html" class="logo" style="text-decoration:none;">
+            <div class="logo-icon">AS</div>
+            <div class="logo-text">Amol Soft <span>Dev</span></div>
+        </a>
+        <div class="footer-copy">© 2025 Amol Soft Developing Industry. All rights reserved.</div>
+        <div class="footer-links">
+            <a href="#services">Services</a>
+            <a href="login.html">Login</a>
+            <a href="signup.html">Sign Up</a>
+            <a href="#team">Contact</a>
+        </div>
+    </footer>
+
+    <script>
+        // Cursor
+        const cur = document.getElementById('cur'), cur2 = document.getElementById('cur2');
+        let mx = 0, my = 0, rx = 0, ry = 0;
+        document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.cssText += `;left:${mx}px;top:${my}px`; });
+        (function loop() { rx += (mx - rx) * .1; ry += (my - ry) * .1; cur2.style.cssText += `;left:${rx}px;top:${ry}px`; requestAnimationFrame(loop); })();
+        document.querySelectorAll('a,button,.svc-card,.team-card,.step').forEach(el => {
+            el.addEventListener('mouseenter', () => { cur.style.width = '18px'; cur.style.height = '18px'; cur2.style.width = '48px'; cur2.style.height = '48px'; });
+            el.addEventListener('mouseleave', () => { cur.style.width = '10px'; cur.style.height = '10px'; cur2.style.width = '32px'; cur2.style.height = '32px'; });
+        });
+
+        // Particles
+        const canvas = document.getElementById('particles'), ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+        const pts = Array.from({ length: 60 }, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - .5) * .3, vy: (Math.random() - .5) * .3, r: Math.random() * 1.5 + .5 }));
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            pts.forEach(p => {
+                p.x += p.vx; p.y += p.vy;
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(79,159,255,.3)'; ctx.fill();
+            });
+            pts.forEach((a, i) => pts.slice(i + 1).forEach(b => {
+                const d = Math.hypot(a.x - b.x, a.y - b.y);
+                if (d < 120) { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.strokeStyle = `rgba(79,159,255,${.08 * (1 - d / 120)})`; ctx.lineWidth = .5; ctx.stroke(); }
+            }));
+            requestAnimationFrame(drawParticles);
+        }
+        drawParticles();
+
+        // Reveal
+        const obs = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); } }); }, { threshold: .1 });
+        document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+        // Order
+        async function submitOrder() {
+            const n = document.getElementById('o-name').value;
+            const p = document.getElementById('o-phone').value;
+            const s = document.getElementById('o-service').value;
+            const d = document.getElementById('o-desc').value;
+            if (!n || !p || !s || !d) { alert('Please fill in all required fields.'); return; }
+            const btn = document.querySelector('.submit-btn');
+            btn.textContent = 'Sending...'; btn.disabled = true;
+            // Send email notification via EmailJS (configured in app-config.js)
+            try {
+                if (window.emailjs) {
+                    await emailjs.send('service_amolsoft', 'template_order', {
+                        client_name: n, client_phone: p, service: s,
+                        budget: document.getElementById('o-budget').value,
+                        timeline: document.getElementById('o-timeline').value,
+                        description: d,
+                        to_email: 'siddhartdahatode62@gmail.com'
+                    });
+                }
+            } catch (e) { console.log('EmailJS not configured yet'); }
+            document.getElementById('orderSuccess').style.display = 'block';
+            btn.textContent = '✦ Submitted!';
+        }
+    </script>
+</body>
+
+</html>

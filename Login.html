@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Login — Amol Soft Developing Industry</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        :root {
+            --bg: #050810;
+            --surface: #0c0f1e;
+            --card: #111527;
+            --border: rgba(99, 179, 255, 0.1);
+            --blue: #4f9fff;
+            --teal: #00e5c8;
+            --text: #eef2ff;
+            --muted: #8899bb;
+            --grad: linear-gradient(135deg, #4f9fff, #00e5c8);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 300;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+        }
+
+        .orb1 {
+            width: 500px;
+            height: 500px;
+            background: rgba(79, 159, 255, .06);
+            top: -100px;
+            right: -100px;
+        }
+
+        .orb2 {
+            width: 400px;
+            height: 400px;
+            background: rgba(0, 229, 200, .05);
+            bottom: -80px;
+            left: -80px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 460px;
+            position: relative;
+            overflow: hidden;
+            animation: slideUp .6s ease both;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--grad);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: .82rem;
+            margin-bottom: 2rem;
+            transition: color .3s;
+        }
+
+        .back-link:hover {
+            color: var(--blue);
+        }
+
+        .card-logo {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--grad);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1rem;
+            color: #050810;
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .logo-text span {
+            color: var(--blue);
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: .4rem;
+        }
+
+        .sub {
+            color: var(--muted);
+            font-size: .88rem;
+            margin-bottom: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255, 255, 255, .04);
+            border-radius: 10px;
+            padding: .3rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            flex: 1;
+            padding: .55rem;
+            text-align: center;
+            border-radius: 8px;
+            font-size: .85rem;
+            cursor: pointer;
+            transition: all .3s;
+            color: var(--muted);
+        }
+
+        .tab.active {
+            background: var(--blue);
+            color: #050810;
+            font-weight: 600;
+        }
+
+        .fg {
+            display: flex;
+            flex-direction: column;
+            gap: .4rem;
+            margin-bottom: 1rem;
+        }
+
+        label {
+            font-size: .75rem;
+            color: var(--muted);
+            letter-spacing: .06em;
+        }
+
+        input {
+            background: rgba(255, 255, 255, .04);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: .75rem 1rem;
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: .9rem;
+            outline: none;
+            transition: all .3s;
+            width: 100%;
+        }
+
+        input:focus {
+            border-color: rgba(79, 159, 255, .45);
+            box-shadow: 0 0 0 3px rgba(79, 159, 255, .07);
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap input {
+            padding-right: 3rem;
+        }
+
+        .eye-btn {
+            position: absolute;
+            right: .8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: .5rem;
+            background: var(--grad);
+            border: none;
+            color: #050810;
+            padding: .9rem;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: .95rem;
+            cursor: pointer;
+            transition: all .3s;
+        }
+
+        .submit-btn:hover {
+            opacity: .9;
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            color: var(--muted);
+            font-size: .8rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .google-btn {
+            width: 100%;
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: .75rem;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-size: .9rem;
+            cursor: pointer;
+            transition: all .3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .7rem;
+        }
+
+        .google-btn:hover {
+            background: rgba(255, 255, 255, .08);
+            border-color: rgba(255, 255, 255, .15);
+        }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: .85rem;
+            color: var(--muted);
+        }
+
+        .footer-link a {
+            color: var(--blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .error-msg {
+            background: rgba(255, 107, 107, .08);
+            border: 1px solid rgba(255, 107, 107, .25);
+            border-radius: 10px;
+            padding: .75rem 1rem;
+            color: #ff8fa3;
+            font-size: .84rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .success-msg {
+            background: rgba(0, 229, 200, .08);
+            border: 1px solid rgba(0, 229, 200, .25);
+            border-radius: 10px;
+            padding: .75rem 1rem;
+            color: var(--teal);
+            font-size: .84rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-orb orb1"></div>
+    <div class="bg-orb orb2"></div>
+    <div class="card">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        <div class="card-logo">
+            <div class="logo-icon">AS</div>
+            <div class="logo-text">Amol Soft <span>Dev</span></div>
+        </div>
+        <h2>Welcome Back</h2>
+        <p class="sub">Sign in to your account to access your dashboard and chat.</p>
+
+        <div class="tabs">
+            <div class="tab active" onclick="setRole('client',this)">Client</div>
+            <div class="tab" onclick="setRole('team',this)">Team Member</div>
+        </div>
+
+        <div class="error-msg" id="errMsg"></div>
+        <div class="success-msg" id="sucMsg"></div>
+
+        <div class="fg"><label>Email Address</label><input type="email" id="email" placeholder="you@email.com"
+                autocomplete="email" /></div>
+        <div class="fg"><label>Password</label>
+            <div class="input-wrap">
+                <input type="password" id="password" placeholder="Your password" autocomplete="current-password" />
+                <button class="eye-btn" onclick="togglePwd()" type="button">👁</button>
+            </div>
+        </div>
+        <div style="text-align:right;margin-bottom:1rem;"><a href="#"
+                style="color:var(--blue);text-decoration:none;font-size:.82rem;" onclick="forgotPassword()">Forgot
+                password?</a></div>
+        <button class="submit-btn" id="loginBtn" onclick="doLogin()">Sign In →</button>
+        <div class="divider">or</div>
+        <button class="google-btn" onclick="googleLogin()">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+                <path fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                <path fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                <path fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                <path fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+            </svg>
+            Continue with Google
+        </button>
+        <p class="footer-link">Don't have an account? <a href="signup.html">Sign up free</a></p>
+    </div>
+
+    <script src="firebase-config.js"></script>
+    <script>
+        let userRole = 'client';
+        function setRole(r, el) { userRole = r; document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); el.classList.add('active'); }
+        function showErr(m) { const e = document.getElementById('errMsg'); e.textContent = m; e.style.display = 'block'; document.getElementById('sucMsg').style.display = 'none'; }
+        function showSuc(m) { const e = document.getElementById('sucMsg'); e.textContent = m; e.style.display = 'block'; document.getElementById('errMsg').style.display = 'none'; }
+        function togglePwd() { const i = document.getElementById('password'); i.type = i.type === 'password' ? 'text' : 'password'; }
+        async function forgotPassword() {
+            const email = document.getElementById('email').value;
+            if (!email) { showErr('Enter your email first.'); return; }
+            try { await firebase.auth().sendPasswordResetEmail(email); showSuc('Password reset email sent!'); }
+            catch (e) { showErr(e.message); }
+        }
+        async function doLogin() {
+            const email = document.getElementById('email').value.trim();
+            const pwd = document.getElementById('password').value;
+            if (!email || !pwd) { showErr('Please fill in all fields.'); return; }
+            const btn = document.getElementById('loginBtn'); btn.disabled = true; btn.textContent = 'Signing in...';
+            try {
+                const cred = await firebase.auth().signInWithEmailAndPassword(email, pwd);
+                const uid = cred.user.uid;
+                // Log visitor notification
+                await firebase.firestore().collection('notifications').add({
+                    type: 'login', user: email, role: userRole, time: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                // Send email notification
+                try { emailjs.send('service_amolsoft', 'template_login', { visitor_email: email, role: userRole, time: new Date().toLocaleString() }); } catch (e) { }
+                window.location.href = 'dashboard.html';
+            } catch (e) {
+                showErr(e.code === 'auth/user-not-found' ? 'No account found with this email.' : e.code === 'auth/wrong-password' ? 'Incorrect password.' : e.message);
+                btn.disabled = false; btn.textContent = 'Sign In →';
+            }
+        }
+        async function googleLogin() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            try {
+                const result = await firebase.auth().signInWithPopup(provider);
+                const user = result.user;
+                await firebase.firestore().collection('users').doc(user.uid).set({ name: user.displayName, email: user.email, role: userRole, photo: user.photoURL, createdAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+                await firebase.firestore().collection('notifications').add({ type: 'login', user: user.email, role: userRole, time: firebase.firestore.FieldValue.serverTimestamp() });
+                try { emailjs.send('service_amolsoft', 'template_login', { visitor_email: user.email, role: userRole, time: new Date().toLocaleString() }); } catch (e) { }
+                window.location.href = 'dashboard.html';
+            } catch (e) { showErr(e.message); }
+        }
+    </script>
+</body>
+
+</html>

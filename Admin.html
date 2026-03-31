@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Admin Panel — Amol Soft Developing Industry</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet" />
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        :root {
+            --bg: #050810;
+            --surface: #0c0f1e;
+            --card: #111527;
+            --card2: #161a2e;
+            --border: rgba(99, 179, 255, 0.1);
+            --blue: #4f9fff;
+            --teal: #00e5c8;
+            --gold: #f5c842;
+            --rose: #ff6b8a;
+            --green: #4ade80;
+            --text: #eef2ff;
+            --muted: #8899bb;
+            --grad: linear-gradient(135deg, #4f9fff, #00e5c8);
+            --sidebar: 240px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 300;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* ── LOCK SCREEN ── */
+        #lockScreen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lock-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lock-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--grad);
+        }
+
+        .lock-icon {
+            font-size: 3rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .lock-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: .3rem;
+        }
+
+        .lock-card p {
+            color: var(--muted);
+            font-size: .85rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .lock-input {
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: .8rem 1rem;
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: .95rem;
+            outline: none;
+            width: 100%;
+            text-align: center;
+            letter-spacing: .1em;
+            transition: all .3s;
+            margin-bottom: 1rem;
+        }
+
+        .lock-input:focus {
+            border-color: rgba(79, 159, 255, .4);
+            box-shadow: 0 0 0 3px rgba(79, 159, 255, .07);
+        }
+
+        .lock-btn {
+            width: 100%;
+            background: var(--grad);
+            border: none;
+            color: #050810;
+            padding: .85rem;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: .95rem;
+            cursor: pointer;
+            transition: all .3s;
+        }
+
+        .lock-btn:hover {
+            opacity: .9;
+        }
+
+        .lock-err {
+            color: var(--rose);
+            font-size: .82rem;
+            margin-top: .7rem;
+            display: none;
+        }
+
+        .lock-hint {
+            font-size: .75rem;
+            color: var(--muted);
+            margin-top: 1rem;
+        }
+
+        .lock-hint a {
+            color: var(--blue);
+            text-decoration: none;
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: var(--sidebar);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            padding: 1.4rem 1.2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--grad);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: .9rem;
+            color: #050810;
+            flex-shrink: 0;
+        }
+
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: .95rem;
+            line-height: 1.2;
+        }
+
+        .logo-text span {
+            color: var(--blue);
+        }
+
+        .admin-badge {
+            margin: 0 1rem .8rem;
+            background: rgba(245, 200, 66, .08);
+            border: 1px solid rgba(245, 200, 66, .2);
+            border-radius: 8px;
+            padding: .4rem .8rem;
+            font-size: .72rem;
+            color: var(--gold);
+            text-align: center;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: .6rem .7rem;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            padding: .65rem .9rem;
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: .85rem;
+            margin-bottom: .2rem;
+            transition: all .2s;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, .04);
+            color: var(--text);
+        }
+
+        .nav-item.active {
+            background: rgba(79, 159, 255, .1);
+            color: var(--blue);
+        }
+
+        .nav-item .ni {
+            width: 20px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .nav-count {
+            margin-left: auto;
+            background: var(--rose);
+            color: #fff;
+            font-size: .65rem;
+            font-weight: 700;
+            padding: .1rem .45rem;
+            border-radius: 50px;
+        }
+
+        .sidebar-bottom {
+            padding: .8rem .7rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: .3rem;
+        }
+
+        .sb-link {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            padding: .6rem .9rem;
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--muted);
+            font-size: .82rem;
+            transition: all .2s;
+            text-decoration: none;
+        }
+
+        .sb-link:hover {
+            background: rgba(255, 255, 255, .04);
+            color: var(--text);
+        }
+
+        .sb-link.danger:hover {
+            background: rgba(255, 107, 138, .08);
+            color: var(--rose);
+        }
+
+        /* ── MAIN ── */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .topbar {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface);
+            flex-shrink: 0;
+        }
+
+        .topbar-left h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        .topbar-left p {
+            color: var(--muted);
+            font-size: .78rem;
+            margin-top: .1rem;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: .8rem;
+        }
+
+        .admin-pill {
+            background: rgba(245, 200, 66, .1);
+            border: 1px solid rgba(245, 200, 66, .25);
+            color: var(--gold);
+            font-size: .75rem;
+            padding: .3rem .9rem;
+            border-radius: 50px;
+            font-weight: 500;
+        }
+
+        .time-pill {
+            color: var(--muted);
+            font-size: .8rem;
+        }
+
+        /* ── PAGES ── */
+        .page {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        .page-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        /* ── STATS STRIP ── */
+        .stats-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.4rem 1.6rem;
+            transition: all .3s;
+        }
+
+        .stat-box:hover {
+            border-color: rgba(79, 159, 255, .2);
+        }
+
+        .sb-label {
+            font-size: .7rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: .4rem;
+        }
+
+        .sb-val {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 900;
+            background: var(--grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sb-sub {
+            font-size: .75rem;
+            color: var(--muted);
+            margin-top: .2rem;
+        }
+
+        /* ── INVITE CODES PAGE ── */
+        .section-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--grad);
+        }
+
+        .sc-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: .3rem;
+        }
+
+        .sc-sub {
+            color: var(--muted);
+            font-size: .82rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .gen-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .fg {
+            display: flex;
+            flex-direction: column;
+            gap: .4rem;
+        }
+
+        .fg label {
+            font-size: .75rem;
+            color: var(--muted);
+            letter-spacing: .06em;
+        }
+
+        .fg input,
+        .fg select {
+            background: rgba(255, 255, 255, .05);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: .7rem 1rem;
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: .88rem;
+            outline: none;
+            transition: all .3s;
+            width: 100%;
+        }
+
+        .fg input:focus,
+        .fg select:focus {
+            border-color: rgba(79, 159, 255, .4);
+        }
+
+        .fg select option {
+            background: var(--card);
+        }
+
+        .gen-btn {
+            background: var(--grad);
+            border: none;
+            color: #050810;
+            padding: .7rem 1.4rem;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: .88rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all .3s;
+            height: 40px;
+            align-self: end;
+        }
+
+        .gen-btn:hover {
+            opacity: .9;
+            transform: translateY(-1px);
+        }
+
+        /* Code Table */
+        .code-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .code-table th {
+            text-align: left;
+            font-size: .7rem;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            padding: .6rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-table td {
+            padding: .85rem 1rem;
+            border-bottom: 1px solid rgba(99, 179, 255, .05);
+            font-size: .85rem;
+            vertical-align: middle;
+        }
+
+        .code-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .code-table tr:hover td {
+            background: rgba(255, 255, 255, .02);
+        }
+
+        .code-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid var(--border);
+            padding: .35rem .8rem;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: .9rem;
+            letter-spacing: .08em;
+            cursor: pointer;
+            transition: all .3s;
+        }
+
+        .code-pill:hover {
+            border-color: var(--blue);
+            background: rgba(79, 159, 255, .08);
+        }
+
+        .code-pill .copy-icon {
+            font-size: .75rem;
+            color: var(--muted);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: .2rem .65rem;
+            border-radius: 50px;
+            font-size: .7rem;
+            font-weight: 600;
+            letter-spacing: .04em;
+        }
+
+        .badge-active {
+            background: rgba(74, 222, 128, .1);
+            color: var(--green);
+            border: 1px solid rgba(74, 222, 128, .2);
+        }
+
+        .badge-used {
+            background: rgba(99, 179, 255, .1);
+            color: var(--blue);
+            border: 1px solid rgba(99, 179, 255, .2);
+        }
+
+        .badge-expired {
+            background: rgba(255, 107, 138, .1);
+            color: var(--rose);
+            border: 1px solid rgba(255, 107, 138, .2);
+        }
+
+        .badge-pending {
+            background: rgba(245, 200, 66, .1);
+            color: var(--gold);
+            border: 1px solid rgba(245, 200, 66, .2);
+        }
+
+        .del-btn {
+            background: rgba(255, 107, 138, .08);
+            border: 1px solid rgba(255, 107, 138, .15);
+            color: var(--rose);
+            padding: .3rem .7rem;
+            border-radius: 8px;
+            font-size: .75rem;
+            cursor: pointer;
+            transition: all .3s;
+        }
+
+        .del-btn:hover {
+            background: rgba(255, 107, 138, .15);
+        }
+
+        .send-btn-sm {
+            background: rgba(0, 229, 200, .08);
+            border: 1px solid rgba(0, 229, 200, .15);
+            color: var(--teal);
+            padding: .3rem .7rem;
+            border-radius: 8px;
+            font-size: .75rem;
+            cursor: pointer;
+            transition: all .3s;
+        }
+
+        .send-btn-sm:hover {
+            background: rgba(0, 229, 200, .15);
+        }
+
+        .expiry-bar {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .expiry-track {
+            flex: 1;
+            max-width: 80px;
+            height: 4px;
+            background: rgba(255, 255, 255, .08);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .expiry-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width .5s;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .empty-state .es-icon {
+            font-size: 2.5rem;
+            margin-bottom: .8rem;
+        }
+
+        .empty-state p {
+            font-size: .88rem;
+        }
+
+        /* SEND MODAL */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .7);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            display: none;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 480px;
+            position: relative;
+            overflow: hidden;
+            animation: popIn .3s ease;
+        }
+
+        .modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--grad);
+        }
+
+        .modal h3 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 800;
+            font-size: 1.3rem;
+            margin-bottom: .3rem;
+        }
+
+        .modal p {
+            color: var(--muted);
+            font-size: .85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .code-display {
+            background: rgba(79, 159, 255, .06);
+            border: 1px solid rgba(79, 159, 255, .15);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .code-display .cd-label {
+            font-size: .72rem;
+            color: var(--muted);
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            margin-bottom: .3rem;
+        }
+
+        .code-display .cd-code {
+            font-family: monospace;
+            font-size: 1.6rem;
+            letter-spacing: .2em;
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        .code-display .cd-expiry {
+            font-size: .78rem;
+            color: var(--muted);
+            margin-top: .3rem;
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: .8rem;
+            flex-wrap: wrap;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: .75rem 1rem;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: .85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .3s;
+            border: none;
+        }
+
+        .mb-copy {
+            background: rgba(79, 159, 255, .1);
+            border: 1px solid rgba(79, 159, 255, .2);
+            color: var(--blue);
+        }
+
+        .mb-copy:hover {
+            background: rgba(79, 159, 255, .18);
+        }
+
+        .mb-wa {
+            background: rgba(37, 211, 102, .1);
+            border: 1px solid rgba(37, 211, 102, .2);
+            color: #25d366;
+        }
+
+        .mb-wa:hover {
+            background: rgba(37, 211, 102, .2);
+        }
+
+        .mb-sms {
+            background: rgba(245, 200, 66, .1);
+            border: 1px solid rgba(245, 200, 66, .2);
+            color: var(--gold);
+        }
+
+        .mb-sms:hover {
+            background: rgba(245, 200, 66, .2);
+        }
+
+        .mb-email {
+            background: rgba(0, 229, 200, .1);
+            border: 1px solid rgba(0, 229, 200, .2);
+            color: var(--teal);
+        }
+
+        .mb-email:hover {
+            background: rgba(0, 229, 200, .2);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color .3s;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+        }
+
+        /* MEMBERS PAGE */
+        .members-grid {
+            display: flex;
+            flex-direction: column;
+            gap: .8rem;
+        }
+
+        .member-row {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1rem 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all .3s;
+        }
+
+        .member-row:hover {
+            border-color: rgba(79, 159, 255, .2);
+        }
+
+        .m-av {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .m-info {
+            flex: 1;
+        }
+
+        .m-name {
+            font-size: .9rem;
+            font-weight: 600;
+        }
+
+        .m-email {
+            font-size: .78rem;
+            color: var(--muted);
+        }
+
+        .m-meta {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            margin-top: .2rem;
+        }
+
+        .m-time {
+            font-size: .72rem;
+            color: var(--muted);
+        }
+
+        .m-actions {
+            display: flex;
+            gap: .5rem;
+        }
+
+        .m-act-btn {
+            padding: .3rem .75rem;
+            border-radius: 8px;
+            font-size: .75rem;
+            cursor: pointer;
+            transition: all .3s;
+            border: none;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .m-promote {
+            background: rgba(0, 229, 200, .08);
+            border: 1px solid rgba(0, 229, 200, .15);
+            color: var(--teal);
+        }
+
+        .m-demote {
+            background: rgba(255, 107, 138, .08);
+            border: 1px solid rgba(255, 107, 138, .15);
+            color: var(--rose);
+        }
+
+        .m-ban {
+            background: rgba(255, 107, 138, .08);
+            border: 1px solid rgba(255, 107, 138, .15);
+            color: var(--rose);
+        }
+
+        .m-promote:hover,
+        .m-demote:hover,
+        .m-ban:hover {
+            opacity: .75;
+        }
+
+        /* NOTIFICATIONS PAGE */
+        .notif-list {
+            display: flex;
+            flex-direction: column;
+            gap: .7rem;
+        }
+
+        .ni {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .ni-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .ni-body {
+            flex: 1;
+        }
+
+        .ni-body h5 {
+            font-size: .85rem;
+            font-weight: 500;
+            margin-bottom: .15rem;
+        }
+
+        .ni-body p {
+            font-size: .75rem;
+            color: var(--muted);
+        }
+
+        .ni-time {
+            font-size: .72rem;
+            color: var(--muted);
+            white-space: nowrap;
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1rem 1.5rem;
+            font-size: .85rem;
+            z-index: 9000;
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .5);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all .4s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-color: rgba(74, 222, 128, .3);
+            color: var(--green);
+        }
+
+        .toast.error {
+            border-color: rgba(255, 107, 138, .3);
+            color: var(--rose);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, .1);
+            border-radius: 10px;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(.95)
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1)
+            }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ── LOCK SCREEN ── -->
+    <div id="lockScreen">
+        <div class="lock-card">
+            <div class="lock-icon">🔐</div>
+            <h2>Admin Access Only</h2>
+            <p>This panel is restricted to Siddharth (Team Incharge). Enter your admin password to continue.</p>
+            <input class="lock-input" type="password" id="lockPwd" placeholder="Enter admin password"
+                onkeydown="if(event.key==='Enter')checkLock()" />
+            <button class="lock-btn" onclick="checkLock()">Unlock Panel →</button>
+            <div class="lock-err" id="lockErr">❌ Wrong password. Try again.</div>
+            <p class="lock-hint">Not Siddharth? <a href="dashboard.html">Go to Dashboard</a></p>
+        </div>
+    </div>
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar" id="mainUI" style="display:none;">
+        <div class="sidebar-logo">
+            <div class="logo-icon">AS</div>
+            <div class="logo-text">Amol Soft <span>Admin</span></div>
+        </div>
+        <div class="admin-badge">⚡ Admin Panel</div>
+        <nav class="sidebar-nav">
+            <div class="nav-item active" onclick="showPage('overview',this)"><span class="ni">📊</span> Overview</div>
+            <div class="nav-item" onclick="showPage('codes',this)"><span class="ni">🎟️</span> Invite Codes <span
+                    class="nav-count" id="activeCodeCount">0</span></div>
+            <div class="nav-item" onclick="showPage('members',this)"><span class="ni">👥</span> Members</div>
+            <div class="nav-item" onclick="showPage('notifications',this)"><span class="ni">🔔</span> All Notifications
+            </div>
+        </nav>
+        <div class="sidebar-bottom">
+            <a href="dashboard.html" class="sb-link"><span>🏠</span> Dashboard</a>
+            <a href="index.html" class="sb-link"><span>🌐</span> View Website</a>
+            <div class="sb-link danger" onclick="firebase.auth().signOut().then(()=>location.href='login.html')">
+                <span>🚪</span> Sign Out</div>
+        </div>
+    </aside>
+
+    <!-- ── MAIN ── -->
+    <div class="main" id="mainContent" style="display:none;">
+        <div class="topbar">
+            <div class="topbar-left">
+                <h2 id="topbarTitle">Overview</h2>
+                <p>Amol Soft Developing Industry — Admin Panel</p>
+            </div>
+            <div class="topbar-right">
+                <span class="admin-pill">👑 Siddharth — Admin</span>
+                <span class="time-pill" id="clock"></span>
+            </div>
+        </div>
+
+        <!-- OVERVIEW PAGE -->
+        <div class="page active" id="page-overview">
+            <div class="page-body">
+                <div class="stats-strip">
+                    <div class="stat-box">
+                        <div class="sb-label">Active Codes</div>
+                        <div class="sb-val" id="s-active">—</div>
+                        <div class="sb-sub">Ready to use</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="sb-label">Total Members</div>
+                        <div class="sb-val" id="s-members">—</div>
+                        <div class="sb-sub">Team + clients</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="sb-label">Total Orders</div>
+                        <div class="sb-val" id="s-orders">—</div>
+                        <div class="sb-sub">All time</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="sb-label">Chat Messages</div>
+                        <div class="sb-val" id="s-msgs">—</div>
+                        <div class="sb-sub">All rooms</div>
+                    </div>
+                </div>
+                <!-- Quick generate -->
+                <div class="section-card">
+                    <div class="sc-title">⚡ Quick Generate Invite Code</div>
+                    <div class="sc-sub">Generate a code and share it instantly with the new team member.</div>
+                    <div class="gen-form">
+                        <div class="fg"><label>Person's Name</label><input type="text" id="q-name"
+                                placeholder="e.g. Rahul Sharma" /></div>
+                        <div class="fg"><label>Their Email (optional)</label><input type="email" id="q-email"
+                                placeholder="rahul@email.com" /></div>
+                        <div class="fg"><label>Expires In</label>
+                            <select id="q-expiry">
+                                <option value="1">1 Day</option>
+                                <option value="3">3 Days</option>
+                                <option value="7" selected>7 Days</option>
+                                <option value="14">14 Days</option>
+                                <option value="30">30 Days</option>
+                            </select>
+                        </div>
+                        <button class="gen-btn" onclick="generateCode()">🎟️ Generate</button>
+                    </div>
+                </div>
+                <!-- Recent notifications -->
+                <div class="section-card" style="margin-bottom:0;">
+                    <div class="sc-title">🔔 Recent Activity</div>
+                    <div class="sc-sub">Latest events on your website.</div>
+                    <div id="recentNotifs" class="notif-list">
+                        <p style="color:var(--muted);font-size:.85rem;">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INVITE CODES PAGE -->
+        <div class="page" id="page-codes">
+            <div class="page-body">
+                <div class="section-card">
+                    <div class="sc-title">🎟️ Generate New Invite Code</div>
+                    <div class="sc-sub">Create a time-limited code to invite a new team member. Each code is unique and
+                        single-use.</div>
+                    <div class="gen-form">
+                        <div class="fg"><label>Person's Name *</label><input type="text" id="c-name"
+                                placeholder="Full name" /></div>
+                        <div class="fg"><label>Their Email</label><input type="email" id="c-email"
+                                placeholder="their@email.com" /></div>
+                        <div class="fg"><label>Expires In</label>
+                            <select id="c-expiry">
+                                <option value="1">1 Day</option>
+                                <option value="3">3 Days</option>
+                                <option value="7" selected>7 Days</option>
+                                <option value="14">14 Days</option>
+                                <option value="30">30 Days</option>
+                            </select>
+                        </div>
+                        <button class="gen-btn" onclick="generateCode('codes')">🎟️ Generate Code</button>
+                    </div>
+                </div>
+                <div class="section-card" style="margin-bottom:0;">
+                    <div class="sc-title">All Invite Codes</div>
+                    <div class="sc-sub">Click a code to copy it. Click "Send" to share via WhatsApp/SMS/Email.</div>
+                    <div id="codesTableWrap">
+                        <div class="empty-state">
+                            <div class="es-icon">🎟️</div>
+                            <p>No codes generated yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MEMBERS PAGE -->
+        <div class="page" id="page-members">
+            <div class="page-body">
+                <div class="section-card">
+                    <div class="sc-title">👥 All Registered Members</div>
+                    <div class="sc-sub">Manage client and team member accounts. Promote clients to team or remove
+                        access.</div>
+                    <div class="members-grid" id="membersList">
+                        <p style="color:var(--muted);font-size:.85rem;">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NOTIFICATIONS PAGE -->
+        <div class="page" id="page-notifications">
+            <div class="page-body">
+                <div class="section-card" style="margin-bottom:0;">
+                    <div class="sc-title">🔔 All Notifications</div>
+                    <div class="sc-sub">Every login, signup, order, and message — complete activity log.</div>
+                    <div class="notif-list" id="allNotifs">
+                        <p style="color:var(--muted);font-size:.85rem;">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEND MODAL -->
+    <div class="modal-overlay" id="sendModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <h3>Share Invite Code</h3>
+            <p>Send this code to <strong id="modalPersonName">the person</strong> via any channel below.</p>
+            <div class="code-display">
+                <div class="cd-label">Invite Code</div>
+                <div class="cd-code" id="modalCode">—</div>
+                <div class="cd-expiry" id="modalExpiry">Expires: —</div>
+            </div>
+            <div class="modal-btns">
+                <button class="modal-btn mb-copy" onclick="copyCode()">📋 Copy Code</button>
+                <button class="modal-btn mb-wa" onclick="sendWhatsApp()">💬 WhatsApp</button>
+                <button class="modal-btn mb-sms" onclick="sendSMS()">📱 SMS</button>
+                <button class="modal-btn mb-email" onclick="sendEmail()">📧 Email</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast"></div>
+
+    <script src="firebase-config.js"></script>
+    <script>
+        // ─── CONFIG ───────────────────────────────────────────
+        const ADMIN_EMAIL = 'siddhartdahatode62@gmail.com'; // Only this email can access admin
+        const ADMIN_LOCAL_PWD = 'Siddharth@2025';           // Local lock screen password — CHANGE THIS
+
+        // ─── LOCK SCREEN ──────────────────────────────────────
+        function checkLock() {
+            const pwd = document.getElementById('lockPwd').value;
+            if (pwd === ADMIN_LOCAL_PWD) {
+                document.getElementById('lockScreen').style.display = 'none';
+                initAdmin();
+            } else {
+                const err = document.getElementById('lockErr');
+                err.style.display = 'block';
+                document.getElementById('lockPwd').value = '';
+                document.getElementById('lockPwd').style.borderColor = 'rgba(255,107,138,.5)';
+                setTimeout(() => { err.style.display = 'none'; document.getElementById('lockPwd').style.borderColor = ''; }, 3000);
+            }
+        }
+        document.getElementById('lockPwd').addEventListener('keydown', e => { if (e.key === 'Enter') checkLock(); });
+
+        // ─── CLOCK ────────────────────────────────────────────
+        function updateClock() { document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
+        setInterval(updateClock, 1000); updateClock();
+
+        // ─── INIT ─────────────────────────────────────────────
+        let currentModal = null;
+
+        function initAdmin() {
+            firebase.auth().onAuthStateChanged(async user => {
+                if (!user) { window.location.href = 'login.html'; return; }
+                if (user.email !== ADMIN_EMAIL) { alert('Access denied. Admin only.'); window.location.href = 'dashboard.html'; return; }
+                document.getElementById('mainUI').style.display = 'flex';
+                document.getElementById('mainContent').style.display = 'flex';
+                loadStats();
+                loadRecentNotifs();
+                loadCodes();
+                loadMembers();
+                loadAllNotifs();
+            });
+        }
+
+        // ─── PAGES ────────────────────────────────────────────
+        function showPage(id, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('page-' + id).classList.add('active');
+            if (el) el.classList.add('active');
+            const titles = { overview: 'Overview', codes: 'Invite Codes', members: 'Members', notifications: 'All Notifications' };
+            document.getElementById('topbarTitle').textContent = titles[id] || id;
+            if (id === 'codes') loadCodes();
+            if (id === 'members') loadMembers();
+            if (id === 'notifications') loadAllNotifs();
+        }
+
+        // ─── STATS ────────────────────────────────────────────
+        async function loadStats() {
+            const [codes, users, orders, msgs] = await Promise.all([
+                firebase.firestore().collection('inviteCodes').get(),
+                firebase.firestore().collection('users').get(),
+                firebase.firestore().collection('orders').get(),
+                firebase.firestore().collection('messages').get()
+            ]);
+            const active = codes.docs.filter(d => { const x = d.data(); return x.status === 'active' && new Date(x.expiresAt.toDate()) > new Date(); }).length;
+            document.getElementById('s-active').textContent = active;
+            document.getElementById('s-members').textContent = users.size;
+            document.getElementById('s-orders').textContent = orders.size;
+            document.getElementById('s-msgs').textContent = msgs.size;
+            document.getElementById('activeCodeCount').textContent = active;
+        }
+
+        // ─── CODE GENERATOR ───────────────────────────────────
+        function makeCode() { return (Math.random().toString(36).substr(2, 4) + '-' + Math.random().toString(36).substr(2, 4)).toUpperCase(); }
+
+        async function generateCode(from) {
+            const prefix = from === 'codes' ? 'c' : 'q';
+            const name = document.getElementById(prefix + '-name').value.trim();
+            const email = document.getElementById(prefix + '-email')?.value.trim() || '';
+            const days = parseInt(document.getElementById(prefix + '-expiry').value);
+            if (!name) { showToast('Please enter the person\'s name.', 'error'); return; }
+            const code = makeCode();
+            const expiresAt = new Date(); expiresAt.setDate(expiresAt.getDate() + days);
+            const doc = await firebase.firestore().collection('inviteCodes').add({
+                code, forName: name, forEmail: email, days,
+                expiresAt: firebase.firestore.Timestamp.fromDate(expiresAt),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                status: 'active', usedBy: null
+            });
+            showToast(`✅ Code "${code}" generated for ${name}!`, 'success');
+            document.getElementById(prefix + '-name').value = '';
+            if (document.getElementById(prefix + '-email')) document.getElementById(prefix + '-email').value = '';
+            loadCodes();
+            loadStats();
+            // Open share modal
+            openModal({ code, forName: name, forEmail: email, expiresAt, id: doc.id });
+        }
+
+        // ─── CODES TABLE ──────────────────────────────────────
+        async function loadCodes() {
+            const snap = await firebase.firestore().collection('inviteCodes').orderBy('createdAt', 'desc').get();
+            const wrap = document.getElementById('codesTableWrap');
+            if (snap.empty) { wrap.innerHTML = '<div class="empty-state"><div class="es-icon">🎟️</div><p>No invite codes yet. Generate one above!</p></div>'; return; }
+            const now = new Date();
+            const rows = snap.docs.map(doc => {
+                const d = doc.data();
+                const exp = d.expiresAt ? d.expiresAt.toDate() : new Date(0);
+                const isExpired = exp < now;
+                const daysLeft = Math.max(0, Math.ceil((exp - now) / (1000 * 60 * 60 * 24)));
+                const pct = Math.max(0, Math.min(100, (daysLeft / d.days) * 100));
+                let status = d.status === 'used' ? 'used' : isExpired ? 'expired' : 'active';
+                const badgeMap = { active: 'badge-active', used: 'badge-used', expired: 'badge-expired' };
+                const badgeLabel = { active: 'Active', used: 'Used', expired: 'Expired' };
+                const expColor = pct > 50 ? 'var(--green)' : pct > 20 ? 'var(--gold)' : 'var(--rose)';
+                return `<tr>
+      <td><div class="code-pill" onclick="copyToClipboard('${d.code}')"><span>${d.code}</span><span class="copy-icon">📋</span></div></td>
+      <td>${d.forName || '—'}</td>
+      <td>${d.forEmail || '—'}</td>
+      <td><span class="badge ${badgeMap[status]}">${badgeLabel[status]}</span></td>
+      <td><div class="expiry-bar"><div class="expiry-track"><div class="expiry-fill" style="width:${pct}%;background:${expColor};"></div></div><span style="font-size:.75rem;color:var(--muted);">${status === 'used' ? 'Used' : isExpired ? 'Expired' : daysLeft + 'd left'}</span></div></td>
+      <td style="font-size:.75rem;color:var(--muted);">${d.usedBy || '—'}</td>
+      <td>
+        ${status === 'active' ? `<button class="send-btn-sm" onclick='openModal(${JSON.stringify({ code: d.code, forName: d.forName, forEmail: d.forEmail, expiresAt: exp, id: "${doc.id}" })})'>Send ↗</button>` : ''}
+        <button class="del-btn" onclick="deleteCode('${doc.id}')">Delete</button>
+      </td>
+    </tr>`;
+            }).join('');
+            wrap.innerHTML = `<table class="code-table"><thead><tr><th>Code</th><th>For</th><th>Email</th><th>Status</th><th>Expiry</th><th>Used By</th><th>Actions</th></tr></thead><tbody>${rows}</tbody></table>`;
+        }
+
+        async function deleteCode(id) {
+            if (!confirm('Delete this invite code?')) return;
+            await firebase.firestore().collection('inviteCodes').doc(id).delete();
+            showToast('Code deleted.', 'success');
+            loadCodes(); loadStats();
+        }
+
+        // ─── MODAL ────────────────────────────────────────────
+        function openModal(data) {
+            currentModal = data;
+            document.getElementById('modalCode').textContent = data.code;
+            document.getElementById('modalPersonName').textContent = data.forName || 'the person';
+            const exp = data.expiresAt instanceof Date ? data.expiresAt : data.expiresAt.toDate ? data.expiresAt.toDate() : new Date(data.expiresAt);
+            document.getElementById('modalExpiry').textContent = 'Expires: ' + exp.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) + ' at ' + exp.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('sendModal').classList.add('open');
+        }
+        function closeModal() { document.getElementById('sendModal').classList.remove('open'); }
+        document.getElementById('sendModal').addEventListener('click', e => { if (e.target === document.getElementById('sendModal')) closeModal(); });
+
+        function msgText() {
+            const exp = currentModal.expiresAt instanceof Date ? currentModal.expiresAt : new Date(currentModal.expiresAt);
+            return `Hi ${currentModal.forName || 'there'}! 👋\n\nYou're invited to join *Amol Soft Developing Industry* as a team member.\n\n🎟️ *Invite Code:* ${currentModal.code}\n⏰ *Expires:* ${exp.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}\n\n*How to use:*\n1. Go to our website signup page\n2. Select "Team Member"\n3. Enter the invite code above\n4. Fill your details & create account\n\n🔗 Website: [your-website.com]\n\n— Siddharth\nAmol Soft Developing Industry`;
+        }
+        function copyCode() { copyToClipboard(currentModal.code); }
+        function copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard! ✅', 'success')); }
+        function sendWhatsApp() {
+            const msg = encodeURIComponent(msgText());
+            window.open(`https://wa.me/?text=${msg}`, '_blank');
+            markSent();
+        }
+        function sendSMS() {
+            const msg = encodeURIComponent(`Amol Soft Invite Code: ${currentModal.code}\nExpires: ${currentModal.expiresAt instanceof Date ? currentModal.expiresAt.toLocaleDateString() : new Date(currentModal.expiresAt).toLocaleDateString()}\nSign up at your website as Team Member.`);
+            window.open(`sms:?body=${msg}`, '_blank');
+            markSent();
+        }
+        async function sendEmail() {
+            if (currentModal.forEmail) {
+                try {
+                    await emailjs.send('service_amolsoft', 'template_invite', {
+                        to_name: currentModal.forName,
+                        invite_code: currentModal.code,
+                        expiry: new Date(currentModal.expiresAt instanceof Date ? currentModal.expiresAt : currentModal.expiresAt.toDate()).toLocaleDateString('en-IN'),
+                        to_email: currentModal.forEmail
+                    });
+                    showToast('Email sent to ' + currentModal.forEmail + '! ✅', 'success');
+                } catch (e) { showToast('Email not configured yet. Copy code manually.', 'error'); }
+            } else {
+                window.open(`mailto:?subject=Amol Soft Team Invite&body=${encodeURIComponent(msgText())}`);
+            }
+            markSent();
+        }
+        async function markSent() {
+            if (currentModal.id) {
+                await firebase.firestore().collection('inviteCodes').doc(currentModal.id).update({ lastSentAt: firebase.firestore.FieldValue.serverTimestamp() });
+            }
+            showToast('Code shared!', 'success');
+        }
+
+        // ─── MEMBERS ──────────────────────────────────────────
+        async function loadMembers() {
+            const snap = await firebase.firestore().collection('users').orderBy('createdAt', 'desc').get();
+            const list = document.getElementById('membersList');
+            if (snap.empty) { list.innerHTML = '<p style="color:var(--muted);font-size:.85rem;">No members yet.</p>'; return; }
+            const colors = ['var(--teal)', 'var(--blue)', 'var(--gold)', 'var(--rose)'];
+            const bgs = ['rgba(0,229,200,.15)', 'rgba(79,159,255,.15)', 'rgba(245,200,66,.15)', 'rgba(255,107,138,.15)'];
+            list.innerHTML = snap.docs.map((doc, i) => {
+                const d = doc.data();
+                const c = colors[i % 4]; const bg = bgs[i % 4];
+                const t = d.createdAt ? new Date(d.createdAt.toDate()).toLocaleDateString('en-IN') : '—';
+                const isTeam = d.role === 'team';
+                return `<div class="member-row">
+      <div class="m-av" style="background:${bg};color:${c};">${(d.name || d.email || '?').charAt(0).toUpperCase()}</div>
+      <div class="m-info">
+        <div class="m-name">${d.name || '—'}</div>
+        <div class="m-email">${d.email || '—'} · ${d.phone || 'no phone'}</div>
+        <div class="m-meta"><span class="badge ${isTeam ? 'badge-active' : 'badge-pending'}">${isTeam ? 'Team Member' : 'Client'}</span><span class="m-time">Joined ${t}</span></div>
+      </div>
+      <div class="m-actions">
+        ${!isTeam ? `<button class="m-act-btn m-promote" onclick="changeRole('${doc.id}','team','${d.name || d.email}')">Promote to Team</button>` : `<button class="m-act-btn m-demote" onclick="changeRole('${doc.id}','client','${d.name || d.email}')">Set as Client</button>`}
+      </div>
+    </div>`;
+            }).join('');
+        }
+
+        async function changeRole(uid, newRole, name) {
+            if (!confirm(`Change ${name}'s role to ${newRole}?`)) return;
+            await firebase.firestore().collection('users').doc(uid).update({ role: newRole });
+            showToast(`${name} is now ${newRole === 'team' ? 'a Team Member' : 'a Client'}.`, 'success');
+            loadMembers(); loadStats();
+        }
+
+        // ─── NOTIFICATIONS ────────────────────────────────────
+        const notifIcons = { login: '🔐', signup: '👤', order: '📋', message: '💬', visit: '🌐' };
+        const notifColors = { login: 'rgba(79,159,255,.1)', signup: 'rgba(0,229,200,.1)', order: 'rgba(245,200,66,.1)', message: 'rgba(255,107,138,.1)', visit: 'rgba(99,179,255,.06)' };
+
+        function notifHTML(d) {
+            const t = d.time ? new Date(d.time.toDate()).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—';
+            const icon = notifIcons[d.type] || '🔔';
+            const bg = notifColors[d.type] || 'rgba(79,159,255,.06)';
+            let title = '', sub = '';
+            if (d.type === 'login') { title = `${d.user} signed in`; sub = `Role: ${d.role || 'client'}`; }
+            else if (d.type === 'signup') { title = `New signup: ${d.userName}`; sub = `${d.userEmail} · ${d.userPhone || ''} · Role: ${d.role}`; }
+            else if (d.type === 'order') { title = `Order: ${d.title || d.service}`; sub = `From: ${d.userName} · ${d.service} · ${d.priority || 'Normal'} priority`; }
+            else if (d.type === 'message') { title = `Message from ${d.userName}`; sub = `In: ${d.room} — "${d.preview || ''}"`; }
+            else if (d.type === 'visit') { title = `${d.userName} visited dashboard`; sub = `Role: ${d.role || 'client'}`; }
+            return `<div class="ni"><div class="ni-icon" style="background:${bg};">${icon}</div><div class="ni-body"><h5>${title}</h5><p>${sub}</p></div><div class="ni-time">${t}</div></div>`;
+        }
+
+        async function loadRecentNotifs() {
+            const snap = await firebase.firestore().collection('notifications').orderBy('time', 'desc').limit(8).get();
+            document.getElementById('recentNotifs').innerHTML = snap.empty ? '<p style="color:var(--muted);font-size:.85rem;">No activity yet.</p>' : snap.docs.map(d => notifHTML(d.data())).join('');
+        }
+        async function loadAllNotifs() {
+            const snap = await firebase.firestore().collection('notifications').orderBy('time', 'desc').limit(50).get();
+            document.getElementById('allNotifs').innerHTML = snap.empty ? '<p style="color:var(--muted);font-size:.85rem;">No notifications yet.</p>' : snap.docs.map(d => notifHTML(d.data())).join('');
+        }
+
+        // Real-time refresh
+        firebase.firestore().collection('notifications').orderBy('time', 'desc').limit(1).onSnapshot(() => { loadRecentNotifs(); loadStats(); });
+        firebase.firestore().collection('inviteCodes').onSnapshot(() => { loadCodes(); loadStats(); });
+
+        // ─── TOAST ────────────────────────────────────────────
+        let toastTimer;
+        function showToast(msg, type = 'success') {
+            const t = document.getElementById('toast');
+            t.textContent = msg; t.className = `toast ${type} show`;
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+        }
+    </script>
+</body>
+
+</html>
